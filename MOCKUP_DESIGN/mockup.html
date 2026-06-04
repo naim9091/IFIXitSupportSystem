@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IFixIT · support mockup (appointment & KPI)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root {
+      --bg: #fdf8f0; --bg2: #f5ead8; --bg3: #ead4b4; --bg4: #d9b98a;
+      --gold: #c49a60; --gold-d: #b07d3e; --teal-dk: #1a3a3a; --teal-md: #2d5a5a;
+      --teal: #3d7070; --red: #c0392b; --txt: #1a2e2e; --muted: #5a7070;
+      --light: #9ab8b8; --white: #ffffff; --r: 14px; --rs: 8px;
+      --shadow: 0 8px 32px rgba(26,58,58,.13); --shadow-lg:0 20px 60px rgba(26,58,58,.18);
+    }
+    body {
+      font-family:'DM Sans',sans-serif; background:#e8dece;
+      background-image:radial-gradient(circle at 20% 20%,rgba(196,154,96,.08)0%,transparent 60%),
+                      radial-gradient(circle at 80% 80%,rgba(26,58,58,.06)0%,transparent 60%);
+      min-height:100vh; padding:40px 24px;
+    }
+    .canvas{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:56px;}
+    .page-title{text-align:center;margin-bottom:8px;}
+    .page-title h1{
+      font-family:'DM Serif Display',serif; font-size:30px; color:var(--teal-dk);
+      letter-spacing:-.5px;
+    }
+    .page-title p{font-size:13px;color:var(--gold-d);letter-spacing:.12em;text-transform:uppercase;}
+
+    /* frame wrapper */
+    .frame{display:flex;flex-direction:column;gap:8px;}
+    .frame-tag{
+      font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--gold);
+    }
+    .screen{
+      border-radius:18px; overflow:hidden; box-shadow:var(--shadow-lg);
+      border:1.5px solid var(--bg3);
+    }
+    .chrome{
+      background:var(--bg3); padding:8px 16px; display:flex; align-items:center; gap:6px;
+    }
+    .dot{width:11px;height:11px;border-radius:50%}
+    .dot-r{background:#ff5f57}.dot-y{background:#febc2e}.dot-g{background:#28c840}
+    .url-bar{
+      flex:1; margin-left:10px; background:var(--white); border-radius:5px;
+      padding:3px 12px 3px 30px; font-size:11px; color:var(--muted); font-family:monospace;
+      border:1px solid var(--bg4); position:relative;
+    }
+    .url-bar::before{
+      content:'🔒'; position:absolute; left:8px; top:50%; transform:translateY(-50%);
+      font-size:9px;
+    }
+
+    /* ----- LOGIN (frame 1) same style but optional appointment hint later */
+    .login-body{display:flex;min-height:500px;}
+    .login-left{
+      flex:1; background:linear-gradient(145deg,#1a3a3a 0%,#2d5a5a 100%);
+      padding:48px 48px; display:flex; flex-direction:column; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .login-left::before,.login-left::after{content:'';position:absolute;border-radius:50%;background:rgba(196,154,96,.08);}
+    .login-left::before{top:-80px;right:-80px;width:280px;height:280px;}
+    .login-left::after{bottom:-60px;left:-60px;width:200px;height:200px;}
+    .brand-tag{font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--gold);margin-bottom:20px;}
+    .brand-headline{
+      font-family:'DM Serif Display',serif; font-size:38px; line-height:1.15; color:var(--bg);
+      margin-bottom:32px; font-style:italic;
+    }
+    .feat-list{display:flex;flex-direction:column;gap:12px;}
+    .feat-item{display:flex;align-items:center;gap:10px;color:var(--bg2);font-size:15px;font-weight:500;}
+    .feat-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);}
+    .login-right{
+      width:400px; background:var(--bg); display:flex; flex-direction:column;
+      align-items:center; justify-content:center; padding:48px 40px;
+    }
+    .social-row{display:flex;gap:10px;margin-bottom:24px;}
+    .social-btn{
+      width:36px;height:36px;border-radius:50%;border:1.5px solid var(--bg3);
+      display:flex;align-items:center;justify-content:center;font-size:13px;
+      color:var(--muted); background:var(--white); cursor:default;
+    }
+    .app-logo{font-family:'DM Serif Display',serif;font-size:36px;color:var(--red);font-style:italic;margin-bottom:4px;}
+    .login-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+    .input-wrap{width:100%;position:relative;margin-bottom:14px;}
+    .input-wrap input{
+      width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--bg3);border-radius:var(--rs);
+      background:var(--white);font-size:13.5px;color:var(--txt);outline:none;
+    }
+    .input-wrap input:focus{border-color:var(--teal);}
+    .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;}
+    .check-row{width:100%;display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+    .check-row input{accent-color:var(--teal);}
+    .check-row label{font-size:12.5px;color:var(--muted);}
+    .btn-sign{
+      width:100%;padding:14px;background:var(--red);color:white;border:none;border-radius:var(--rs);
+      font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,.28);margin-bottom:28px;
+    }
+    .login-foot{font-size:11.5px;color:var(--light);font-style:italic;}
+
+    /* ----- APP SHELL (used by frames 2,3) ----- */
+    .app-shell{display:flex;min-height:600px;}
+    .sidebar{
+      width:60px; background:var(--teal-dk); display:flex; flex-direction:column;
+      align-items:center; padding:20px 0; gap:16px; flex-shrink:0;
+    }
+    .sb-icon{
+      width:36px;height:36px;border-radius:7px;background:rgba(255,255,255,.07);
+      display:flex;align-items:center;justify-content:center;color:var(--bg2);font-size:16px;
+    }
+    .sb-icon.act{background:var(--gold);color:var(--teal-dk);}
+    .app-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .topbar{
+      background:var(--bg); border-bottom:1.5px solid var(--bg3); padding:12px 24px;
+      display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+    }
+    .topbar-brand{font-family:'DM Serif Display',serif;font-size:20px;color:var(--teal-dk);font-style:italic;}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .topbar-user{font-size:12px;font-weight:600;color:var(--muted);}
+    .av{
+      width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--gold));
+      display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;
+    }
+    .content{flex:1;padding:24px 24px;background:var(--bg);overflow:auto;}
+
+    /* ----- Frame 2 – ticket table (admin assign) ----- */
+    .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+    .search-box{
+      display:flex;align-items:center;gap:6px; background:white; border:1.5px solid var(--bg3);
+      border-radius:var(--rs); padding:8px 14px; font-size:13px; color:var(--muted); width:230px;
+    }
+    .filter-chip{
+      display:flex;align-items:center;gap:5px; background:white; border:1.5px solid var(--teal);
+      border-radius:var(--rs); padding:7px 14px; font-size:12px; color:var(--teal); cursor:default;
+    }
+    .filter-chip.n{border-color:var(--bg3);color:var(--muted);}
+    .btn-teal{
+      padding:9px 20px; background:var(--teal-dk); color:white; border:none; border-radius:var(--rs);
+      font-weight:700; font-size:12.5px; cursor:default; margin-left:auto; white-space:nowrap;
+    }
+    .btn-ol{
+      padding:7px 16px; border:1.5px solid var(--bg3); border-radius:var(--rs); background:white;
+      font-size:12px; font-weight:500; color:var(--txt); cursor:default; white-space:nowrap;
+    }
+    .tbl-wrap{border-radius:var(--r); overflow:auto; border:1.5px solid var(--bg3); background:white;}
+    table{width:100%;border-collapse:collapse; min-width:1300px;}
+    thead th{
+      background:var(--bg2); padding:10px 10px; font-size:10px; font-weight:700; letter-spacing:.06em;
+      text-transform:uppercase; color:var(--muted); border-bottom:1.5px solid var(--bg3); text-align:left;
+    }
+    tbody td{padding:10px 10px; font-size:12px; color:var(--txt); border-bottom:1px solid var(--bg2);}
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:var(--bg2);}
+    .badge-open{
+      display:inline-flex; align-items:center; gap:4px; background:rgba(61,112,112,.11);
+      color:var(--teal); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
+    }
+    .badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+    .btn-act{
+      padding:4px 12px; border:1.5px solid var(--bg3); border-radius:5px; background:white;
+      font-size:11px; font-weight:600; color:var(--teal); cursor:default; white-space:nowrap;
+    }
+    .btn-act-g{border-color:var(--gold);color:var(--gold-d);}
+    .btn-mail{
+      padding:4px 10px; border:1.5px solid var(--bg3); border-radius:5px; background:var(--bg2);
+      font-size:11px; color:var(--muted); cursor:default;
+    }
+    .tbl-foot{
+      padding:10px 16px; background:var(--bg2); border-top:1.5px solid var(--bg3);
+      font-size:11.5px; color:var(--muted); text-align:right;
+    }
+    .status-txt{font-size:11px;color:var(--muted);}
+
+    /* ----- Frame 3 – Dashboard (user + KPI) with appointment area ----- */
+    .prof-card{
+      background:linear-gradient(135deg,var(--teal-dk) 0%,var(--teal-md) 100%);
+      border-radius:var(--r); padding:24px 28px; display:flex; align-items:center; gap:24px;
+      margin-bottom:20px; border:1.5px solid var(--teal-md);
+    }
+    .prof-av{
+      width:70px;height:70px; border-radius:50%; border:2.5px solid var(--gold);
+      background:var(--bg3); display:flex; align-items:center; justify-content:center;
+      font-family:'DM Serif Display',serif; font-size:28px; color:var(--teal-dk); font-style:italic;
+      flex-shrink:0;
+    }
+    .prof-name{font-family:'DM Serif Display',serif;font-size:22px;color:var(--bg);font-style:italic;margin-bottom:10px;}
+    .prof-meta{
+      display:grid; grid-template-columns:repeat(4,1fr); gap:6px 24px;
+    }
+    .mi{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--bg2);}
+    .mi-ic{color:var(--gold);}
+
+    .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+    .stat-card{
+      border-radius:var(--r); padding:16px 14px; display:flex; flex-direction:column; gap:5px;
+    }
+    .stat-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+    .stat-num{font-family:'DM Serif Display',serif;font-size:34px;line-height:1;font-style:italic;}
+    .stat-sub{font-size:11px;}
+    .sc1{background:var(--teal-dk);color:var(--bg2);}
+    .sc2{background:#2d5080;color:#d0e4f4;}
+    .sc3{background:#7a5a18;color:#f5e8c8;}
+    .sc4{background:var(--red);color:#fce8e6;}
+    .sc5{background:#3a4a1a;color:#d8e8b0;}
+
+    /* new appointment row – functional requirement */
+    .appointment-bar{
+      background:var(--white); border-radius:var(--r); border:1.5px solid var(--bg3);
+      padding:14px 22px; margin-bottom:22px; display:flex; align-items:center; justify-content:space-between;
+      box-shadow:0 2px 6px rgba(0,0,0,0.03);
+    }
+    .appoint-label{font-weight:600; color:var(--teal-dk); display:flex; align-items:center; gap:8px;}
+    .appoint-badge{
+      background:var(--gold); color:var(--teal-dk); border-radius:30px; padding:4px 16px;
+      font-size:12px; font-weight:600;
+    }
+    .appoint-time{
+      background:var(--bg2); padding:6px 16px; border-radius:30px; font-size:13px; color:var(--teal-dk);
+      border:1px dashed var(--gold);
+    }
+
+    .panels{display:grid;grid-template-columns:1fr 1.4fr 1.2fr;gap:18px;}
+    .panel{
+      background:var(--white); border-radius:var(--r); border:1.5px solid var(--bg3);
+      overflow:hidden; display:flex; flex-direction:column;
+    }
+    .panel-hd{
+      display:flex; align-items:center; justify-content:space-between; padding:12px 16px;
+      border-bottom:1.5px solid var(--bg2); background:var(--bg2);
+    }
+    .panel-title{font-weight:700;font-size:13.5px;color:var(--teal-dk);display:flex;align-items:center;gap:6px;}
+    .p-count{background:var(--bg3);color:var(--teal-dk);border-radius:20px;padding:2px 8px;font-size:11px;}
+    .panel-body{padding:12px 16px;flex:1;}
+    .req-item{padding:8px 0;border-bottom:1px solid var(--bg2);}
+    .req-item:last-child{border-bottom:none;}
+    .req-name{font-size:13px;font-weight:600;color:var(--teal);}
+    .req-desc{font-size:11.5px;color:var(--muted);margin:2px 0;}
+    .req-meta{display:flex;gap:8px;font-size:11px;color:var(--muted);}
+    .prio{padding:2px 7px;border-radius:4px;background:rgba(192,57,43,.1);color:var(--red);font-weight:700;font-size:10px;}
+    .ast-tbl{width:100%;border-collapse:collapse;}
+    .ast-tbl th{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);padding:6px 4px;text-align:left;}
+    .ast-tbl td{font-size:11.5px;padding:6px 4px;border-bottom:1px solid var(--bg);color:var(--txt);}
+    .empty-state{display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--light);padding:30px;}
+
+    /* Frame 4 modal */
+    .modal-overlay{
+      background:rgba(26,46,46,.15); display:flex; align-items:center; justify-content:center;
+      padding:40px 20px; min-height:520px;
+    }
+    .modal{
+      background:var(--bg); border-radius:var(--r); max-width:580px; width:100%;
+      box-shadow:var(--shadow-lg); border:1.5px solid var(--bg3); overflow:hidden;
+    }
+    .modal-hd{
+      padding:18px 22px; display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1.5px solid var(--bg3); background:white;
+    }
+    .modal-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--teal-dk);font-style:italic;}
+    .modal-close{
+      width:30px;height:30px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--bg3);
+      display:flex;align-items:center;justify-content:center;cursor:default;color:var(--muted);
+    }
+    .modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px;}
+    .field{display:flex;flex-direction:column;gap:5px;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .field label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);}
+    .field-inp{
+      padding:10px 14px; border:1.5px solid var(--bg3); border-radius:var(--rs);
+      background:white; font-size:13px; color:var(--txt); display:flex; align-items:center;
+      justify-content:space-between;
+    }
+    .field-inp.ph{color:var(--light);}
+    .fi-ico{color:var(--bg4);}
+    .st-open{display:flex;align-items:center;gap:6px;color:var(--teal);}
+    .st-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);}
+    .modal-ft{
+      padding:14px 22px; border-top:1.5px solid var(--bg3); display:flex; align-items:center;
+      justify-content:space-between; background:white;
+    }
+    .btn-cancel{
+      padding:8px 22px; border:1.5px solid var(--bg3); border-radius:var(--rs); background:white;
+      font-size:13.5px; color:var(--muted); cursor:default;
+    }
+    .btn-create{
+      padding:9px 28px; background:var(--teal-dk); color:white; border:none; border-radius:var(--rs);
+      font-weight:700; font-size:13.5px; cursor:default; box-shadow:0 4px 14px rgba(26,58,58,.22);
+    }
+    .page-foot{text-align:center;font-size:11px;color:var(--gold-d);margin-top:24px;}
+  </style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- page header -->
+  <div class="page-title">
+    <h1>IFixIT · support KPI</h1>
+    <p>appointment scheduler · realtime track · beige theme</p>
+  </div>
+
+  <!-- ========== FRAME 1 – SIGN IN (user / admin) ========= -->
+  <div class="frame">
+    <div class="frame-tag">Frame 1 — sign in (user &amp; admin)</div>
+    <div class="screen">
+      <div class="chrome"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><div class="url-bar">app.ifix-it.io/login</div></div>
+      <div class="login-body">
+        <div class="login-left">
+          <div class="brand-tag">Lost Bug · KPI ready</div>
+          <div class="brand-headline">Schedule & resolve<br>IT equipment<br>with ease</div>
+          <div class="feat-list">
+            <div class="feat-item"><span class="feat-dot"></span>Appointment booking</div>
+            <div class="feat-item"><span class="feat-dot"></span>Real‑time ticket track</div>
+            <div class="feat-item"><span class="feat-dot"></span>Expertise assignment</div>
+          </div>
+        </div>
+        <div class="login-right">
+          <div class="social-row"><div class="social-btn">f</div><div class="social-btn">in</div><div class="social-btn">X</div></div>
+          <div class="app-logo">IFixIT</div>
+          <div class="login-sub">sign in to manage tickets</div>
+          <div class="input-wrap"><span class="input-icon">👤</span><input type="text" placeholder="Username"></div>
+          <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" placeholder="Password"></div>
+          <div class="check-row"><input type="checkbox" id="rem1"><label for="rem1">Keep me signed in</label></div>
+          <button class="btn-sign">Sign In</button>
+          <div class="login-foot">A product of Lost Bug · confidential</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FRAME 2 – ADMIN TICKET + ASSIGNMENT (expertise based) ========= -->
+  <div class="frame">
+    <div class="frame-tag">Frame 2 — admin dashboard · assign by expertise</div>
+    <div class="screen">
+      <div class="chrome"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><div class="url-bar">app.ifix-it.io/admin/assign</div></div>
+      <div class="app-shell">
+        <div class="sidebar"><div class="sb-icon act">☰</div><div class="sb-icon">📋</div><div class="sb-icon">⚙</div><div class="sb-icon">📊</div></div>
+        <div class="app-main">
+          <div class="topbar"><div class="topbar-brand">IFixIT</div><div class="topbar-right"><span class="topbar-user">ADMIN</span><div class="av">A</div></div></div>
+          <div class="content">
+            <div class="toolbar">
+              <div class="search-box">🔍 Search tickets…</div>
+              <div class="filter-chip">Status: Open ▾</div>
+              <div class="filter-chip n">Expertise ▾</div>
+              <button class="btn-teal">+ Generate ticket</button>
+              <button class="btn-ol">📈 KPI summary</button>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th></th><th>Problem</th><th>Item</th><th>Date</th><th>Status</th><th>Assign to</th><th>Expertise</th><th>PC/contact</th><th>Mail</th></tr></thead>
+                <tbody>
+                  <tr><td>✏️</td><td>Laptop not powering</td><td>Dell Latitude</td><td>03-Mar-2026</td><td><span class="badge-open"><span class="badge-dot"></span>Open</span></td>
+                    <td><button class="btn-act" style="background:var(--bg2)">Assign</button></td><td><span class="status-txt">power supply</span></td><td>PC 140 / 103.30.190.27</td><td><button class="btn-mail">✉</button></td></tr>
+                  <tr><td>✏️</td><td>Mouse / touchpad</td><td>Logitech</td><td>02-Mar-2026</td><td><span class="badge-open"><span class="badge-dot"></span>Open</span></td>
+                    <td><button class="btn-act" style="background:var(--bg2)">Assign</button></td><td><span class="status-txt">peripheral</span></td><td>PC 102 / 103.30.190.241</td><td><button class="btn-mail">✉</button></td></tr>
+                  <tr><td>✏️</td><td>Desktop no display</td><td>HP Prodesk</td><td>28-Feb-2026</td><td><span class="badge-open"><span class="badge-dot"></span>Open</span></td>
+                    <td><button class="btn-act" style="background:var(--bg2)">Assign</button></td><td><span class="status-txt">graphics</span></td><td>PC 105 / 103.30.190.245</td><td><button class="btn-mail">✉</button></td></tr>
+                  <tr><td>✏️</td><td>Network drop</td><td>Router</td><td>25-Feb-2026</td><td><span class="badge-open"><span class="badge-dot"></span>Open</span></td>
+                    <td><button class="btn-act" style="background:var(--bg2)">Assign</button></td><td><span class="status-txt">networking</span></td><td>PABX 1040</td><td><button class="btn-mail">✉</button></td></tr>
+                  <tr><td>✏️</td><td>Software install</td><td>Windows license</td><td>24-Feb-2026</td><td><span class="badge-open"><span class="badge-dot"></span>Open</span></td>
+                    <td><button class="btn-act" style="background:var(--bg2)">Assign</button></td><td><span class="status-txt">software</span></td><td>PC UBSJOY</td><td><button class="btn-mail">✉</button></td></tr>
+                </tbody>
+              </table>
+              <div class="tbl-foot">5 open tickets · last interval: 8 assigned (this week)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FRAME 3 – USER DASHBOARD with appointment & track ========= -->
+  <div class="frame">
+    <div class="frame-tag">Frame 3 — user dashboard · appointment · real‑time track</div>
+    <div class="screen">
+      <div class="chrome"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><div class="url-bar">app.ifix-it.io/user/track</div></div>
+      <div class="app-shell">
+        <div class="sidebar"><div class="sb-icon act">☰</div><div class="sb-icon">📋</div><div class="sb-icon">📅</div><div class="sb-icon">👤</div></div>
+        <div class="app-main">
+          <div class="topbar"><div class="topbar-brand">IFixIT</div><div class="topbar-right"><span class="topbar-user">UBS (Software)</span><div class="av">U</div></div></div>
+          <div class="content">
+            <!-- profile + real-time status hint -->
+            <div class="prof-card">
+              <div class="prof-av">U</div><div class="prof-info">
+                <div class="prof-name">Team Manager · UBS</div>
+                <div class="prof-meta">
+                  <div class="mi"><span class="mi-ic">📞</span>+88 01979 206201</div>
+                  <div class="mi"><span class="mi-ic">✉</span>info@lostbug.com</div>
+                  <div class="mi"><span class="mi-ic">🖥</span>Computer: 100</div>
+                  <div class="mi"><span class="mi-ic">💻</span>UBSERP</div>
+                  <div class="mi"><span class="mi-ic">🏢</span>Lost Bug</div>
+                  <div class="mi"><span class="mi-ic">📟</span>PABX 1000</div>
+                </div>
+              </div>
+            </div>
+            <!-- Appointment scheduler visual (functional req) -->
+            <div class="appointment-bar">
+              <span class="appoint-label">📅 Your next appointment:</span>
+              <span class="appoint-badge">IT support · 05 Mar 2026, 10:30</span>
+              <span class="appoint-time">🕒 Real‑time status: technician assigned</span>
+            </div>
+
+            <div class="stats-row">
+              <div class="stat-card sc1"><div class="stat-lbl">My tickets</div><div class="stat-num">3</div><div class="stat-sub">this month: 2</div></div>
+              <div class="stat-card sc2"><div class="stat-lbl">Completed</div><div class="stat-num">2</div><div class="stat-sub">this month: 1</div></div>
+              <div class="stat-card sc3"><div class="stat-lbl">In progress</div><div class="stat-num">1</div><div class="stat-sub">awaiting part</div></div>
+              <div class="stat-card sc4"><div class="stat-lbl">Success %</div><div class="stat-num" style="font-size:28px">87%</div><div class="stat-sub">KPI: excellent</div></div>
+              <div class="stat-card sc5"><div class="stat-lbl">Pending</div><div class="stat-num">0</div><div class="stat-sub">approvals</div></div>
+            </div>
+            <!-- Panels: tickets / requisitions / assets (with tracking) -->
+            <div class="panels">
+              <div class="panel">
+                <div class="panel-hd"><div class="panel-title">🎫 My tickets <span class="p-count">3</span></div><span style="font-size:11px;color:var(--teal);">track live</span></div>
+                <div class="panel-body">
+                  <div class="req-item"><span class="req-name">Laptop not powering</span><div class="req-desc">#T234 · status: <strong>technician assigned</strong></div><div class="req-meta"><span>03-Mar</span><span class="prio">high</span></div></div>
+                  <div class="req-item"><span class="req-name">Mouse issue</span><div class="req-desc">#T237 · status: <strong>in progress</strong></div><div class="req-meta"><span>02-Mar</span><span class="prio">medium</span></div></div>
+                  <div class="req-item"><span class="req-name">VPN access</span><div class="req-desc">#T241 · status: <strong>open</strong></div><div class="req-meta"><span>28-Feb</span><span class="prio">low</span></div></div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-hd"><div class="panel-title">🛒 requisitions / assets</div><span>view all</span></div>
+                <div class="panel-body" style="padding:6px 16px">
+                  <div class="req-item"><span class="req-name">MacBook replacement</span><div class="req-desc">status: approved, ETA 06-Mar</div><div class="req-meta"><span>admin: Laura</span><span class="prio">high</span></div></div>
+                  <div class="req-item"><span class="req-name">Headset</span><div class="req-desc">pending approval</div><div class="req-meta"><span>awaiting</span><span class="prio">med</span></div></div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-hd"><div class="panel-title">📦 my assigned assets</div></div>
+                <div class="panel-body" style="padding:0 12px 12px">
+                  <table class="ast-tbl"><thead><tr><th>item</th><th>assigned</th><th>status</th></tr></thead>
+                  <tbody><tr><td>Dell laptop</td><td>20-Feb-26</td><td>active</td></tr>
+                         <tr><td>Dock station</td><td>20-Feb-26</td><td>active</td></tr>
+                         <tr><td>Monitor</td><td>15-Jan-26</td><td>active</td></tr>
+                  </tbody></table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FRAME 4 – GENERATE TICKET MODAL (appointment / schedule hint) ========= -->
+  <div class="frame">
+    <div class="frame-tag">Frame 4 — ticket generation + appointment scheduler</div>
+    <div class="screen">
+      <div class="chrome"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><div class="url-bar">app.ifix-it.io/ticket/new</div></div>
+      <div class="modal-overlay">
+        <div class="modal">
+          <div class="modal-hd"><div class="modal-title">Schedule support / create ticket</div><div class="modal-close">✕</div></div>
+          <div class="modal-body">
+            <div class="field"><label>Asset / equipment *</label><div class="field-inp"><span>Dell Latitude 3420</span><span class="fi-ico">⌄</span></div></div>
+            <div class="field-row">
+              <div class="field"><label>problem type</label><div class="field-inp ph"><span>Hardware</span><span class="fi-ico">⌄</span></div></div>
+              <div class="field"><label>urgency</label><div class="field-inp"><span>High (SLA 4h)</span></div></div>
+            </div>
+            <div class="field"><label>remarks / description</label><div class="field-inp ta ph">“ intermittent power failure … ”</div></div>
+            <!-- appointment scheduling field (functional) -->
+            <div class="field-row">
+              <div class="field"><label>preferred date</label><div class="field-inp"><span>05‑Mar‑2026</span><span class="fi-ico">📅</span></div></div>
+              <div class="field"><label>time slot</label><div class="field-inp"><span>10:30 – 11:30</span><span class="fi-ico">🕒</span></div></div>
+            </div>
+            <div class="field"><label>ticket status (track)</label><div class="field-inp"><span class="st-open"><span class="st-dot"></span>Open · waiting assignment</span></div></div>
+          </div>
+          <div class="modal-ft">
+            <button class="btn-cancel">Cancel</button>
+            <button class="btn-create">Create & schedule</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-foot">IFixIT · Lost Bug · KPI & appointment ready · beige mockup</div>
+</div>
+</body>
+</html>
